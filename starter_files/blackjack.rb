@@ -17,27 +17,31 @@ class BlackjackGame
     puts 'Let\'s play Blackjack!'
     if @wallet > 9
       @shoe.shuffle
-      lose_ten
       bet
       p_deal
+      d_deal
+      player_analyze_hand
     else puts "Game over"
     end
   end
 
   def bet
     puts "You have $#{@wallet}. You bet $10."
+    lose_ten
   end
 
   def p_deal
-   2.times {@p_hand.push(@shoe.draw)}
-  #  puts @p_hand[@p_hand.length-1].rank
-   puts "You are dealt the #{@p_hand[@p_hand.length-1].rank} of #{@p_hand[@p_hand.length-1].suit} and the #{@p_hand[@p_hand.length].rank} of #{@p_hand[@p_hand.length].suit}."
-   player_analyze_hand
+
+    2.times {@p_hand.push(@shoe.draw)}
+    first_card_rank = @p_hand[@p_hand.length-2].rank
+    first_card_suit = @p_hand[@p_hand.length-2].suit
+    second_card_rank = @p_hand[@p_hand.length-1].rank
+    second_card_suit = @p_hand[@p_hand.length-1].suit
+   puts "You are dealt the #{first_card_rank} of #{first_card_suit} and the #{second_card_rank} of #{second_card_suit}."
   end
 
   def d_deal
     2.times {@d_hand.push(@shoe.draw)}
-    dealer_analyze_hand
   end
 
   def player_analyze_hand
@@ -98,6 +102,7 @@ class BlackjackGame
     @total=0
     @shoe=Deck.new
     @shoe.shuffle
+    start_game
   end
 
 
