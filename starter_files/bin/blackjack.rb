@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require_relative '../blackjack'
 
-BlackjackGame.new
+BlackjackGame.new(100)

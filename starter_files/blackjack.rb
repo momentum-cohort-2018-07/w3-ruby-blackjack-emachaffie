@@ -1,48 +1,78 @@
-puts "TODO Implement the game of blackjack."
+require_relative "deck"
+require_relative "card"
 
 class BlackjackGame
-  attr_accessor :p_hand, :d_hand, :wallet, :shoe, :p_total, d_total
+  attr_accessor :p_hand, :d_hand, :wallet, :shoe, :p_total, :d_total
   def initialize (wallet)
     @p_hand = []
     @d_hand = []
     @wallet = wallet
     @shoe = Deck.new
-    @shoe.shuffle
     @p_total = 0
     @d_total = 0
+    start_game
   end
 
   def start_game
-    puts 'Let\'s play Blackjack!\n\n'
+    puts 'Let\'s play Blackjack!'
     if @wallet > 9
-        bet
-        p_deal
-    else puts 
+      @shoe.shuffle
+      lose_ten
+      bet
+      p_deal
+    else puts "Game over"
     end
   end
 
   def bet
-    puts 'You have $#{@wallet} and bet $10.'
+    puts "You have $#{@wallet}. You bet $10."
   end
 
   def p_deal
    2.times {@p_hand.push(@shoe.draw)}
+  #  puts @p_hand[@p_hand.length-1].rank
+   puts "You are dealt the #{@p_hand[@p_hand.length-1].rank} of #{@p_hand[@p_hand.length-1].suit} and the #{@p_hand[@p_hand.length].rank} of #{@p_hand[@p_hand.length].suit}."
    player_analyze_hand
   end
 
   def d_deal
     2.times {@d_hand.push(@shoe.draw)}
+    dealer_analyze_hand
   end
 
   def player_analyze_hand
    @p_total = 0 
-   @p_total = @hand.
+   @p_total = @p_hand.inject(0){|sum, x| sum + x.value}
+   if @p_total > 21
+    # total_result
+    puts "You burnt!"
+    lose_ten
+    new_round
+    else
+   puts "The total of your hand is #{@p_total}"
+   player_choice
+    end
   end
+
+  def player_choice
+    puts "Would you like to (h)it or (s)tay?"
+    @choice = gets.chomp
+    if @choice == "h"
+      p_hit
+    elsif @choice == "s"
+      print "You stay. Your total is #{@p_total}"
+    end
+  end
+
 
   def dealer_analyze_hand
   end
 
   def p_hit
+    puts "Hit me!"
+    @p_hand.push(@shoe.draw)
+    puts "You are dealt the #{@p_hand[@p_hand.length-1].rank} of #{@p_hand[@p_hand.length-1].suit}." 
+    player_analyze_hand
   end
 
   def d_hit
@@ -52,9 +82,22 @@ class BlackjackGame
   end
 
   def calculate_winner
+    new_round
+  end
+
+  def lose_ten
+    @wallet -= 10
+  end
+
+  def earn_ten
   end
 
   def new_round
+    @p_hand=[]
+    @d_hand=[]
+    @total=0
+    @shoe=Deck.new
+    @shoe.shuffle
   end
 
 
@@ -74,5 +117,3 @@ class BlackjackGame
   # - Dealer reshuffles
     
 end
-
-start_game
