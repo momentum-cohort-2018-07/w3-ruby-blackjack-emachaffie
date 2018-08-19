@@ -14,6 +14,7 @@ class BlackjackGame
   end
 
   def start_game
+    puts "********************"
     puts 'Let\'s play Blackjack!'
     if @wallet > 9
       @shoe.shuffle
@@ -31,13 +32,8 @@ class BlackjackGame
   end
 
   def p_deal
-
     2.times {@p_hand.push(@shoe.draw)}
-    first_card_rank = @p_hand[@p_hand.length-2].rank
-    first_card_suit = @p_hand[@p_hand.length-2].suit
-    second_card_rank = @p_hand[@p_hand.length-1].rank
-    second_card_suit = @p_hand[@p_hand.length-1].suit
-   puts "You are dealt the #{first_card_rank} of #{first_card_suit} and the #{second_card_rank} of #{second_card_suit}."
+    puts "You are dealt the #{@p_hand[@p_hand.length-2].rank} of #{@p_hand[@p_hand.length-2].suit} and the #{@p_hand[@p_hand.length-1].rank} of #{@p_hand[@p_hand.length-1].suit}."
   end
 
   def d_deal
@@ -50,10 +46,17 @@ class BlackjackGame
    if @p_total > 21
     # total_result
     puts "You burnt!"
-    lose_ten
-    new_round
+    # Consider putting a random sassy message about the dealer or the player after you finish the main criteria for the game.
+    puts "Would you like to play another hand? (y)es or (n)o?"
+    @choice = gets.chomp
+      if @choice == "y"
+        new_round
+      elsif @choice == "n"
+      else puts "Sorry, I didn't understand that. Liz hasn't coded a way for you to not break this here yet."
+      end
     else
-   puts "The total of your hand is #{@p_total}"
+   puts "The total of your hand is #{@p_total}."
+   puts "The dealer's visible card is the #{@d_hand[@d_hand.length-1].rank} of #{@d_hand[@d_hand.length-1].suit}."
    player_choice
     end
   end
@@ -64,28 +67,69 @@ class BlackjackGame
     if @choice == "h"
       p_hit
     elsif @choice == "s"
-      print "You stay. Your total is #{@p_total}"
+      puts "You stay. Your total is #{@p_total}"
+      dealer_analyze_hand
     end
   end
 
 
   def dealer_analyze_hand
+    @d_total = 0 
+    @d_total = @d_hand.inject(0){|sum, x| sum + x.value}
+    puts "********************"
+    puts "The dealer is inspecting his cards."
+   if @d_total > 21
+    puts "The dealer burnt, you win this hand and $20!!!"
+    earn_twenty
+    new_round
+   elsif @d_total > 16
+    calculate_winner
+   else 
+    d_hit
+   end
+    
   end
 
   def p_hit
-    puts "Hit me!"
     @p_hand.push(@shoe.draw)
+    if @p_hand.length == 3
+      puts "********************"
+      puts "Hit me!"
+    else puts "********************"
+      puts "Hit me baby, one more time!"
+    end
+    
     puts "You are dealt the #{@p_hand[@p_hand.length-1].rank} of #{@p_hand[@p_hand.length-1].suit}." 
     player_analyze_hand
   end
 
   def d_hit
+    @d_hand.push(@shoe.draw)
+    if @d_hand.length == 3
+      puts "********************"
+      puts "The dealer hits."
+    else puts "********************"
+      puts "The dealer hits again."
+    end
+
+    puts "The dealer gets the #{@d_hand[@d_hand.length-1].rank} of #{@d_hand[@d_hand.length-1].suit}." 
+    dealer_analyze_hand
   end
 
   def stay
   end
 
   def calculate_winner
+    @d_total = @d_hand.inject(0){|sum, x| sum + x.value}
+    @p_total = @p_hand.inject(0){|sum, x| sum + x.value}
+    puts "Your total is #{@p_total}. The dealer's total is #{@d_total}."
+    if @d_total > @p_total
+      puts "You lose this hand."
+    elsif @p_total > @d_total
+      puts "You win this hand and $10!!!"
+      earn_twenty
+    else puts "You tie. The dealer wins. His house, his rules."
+    end
     new_round
   end
 
@@ -93,7 +137,8 @@ class BlackjackGame
     @wallet -= 10
   end
 
-  def earn_ten
+  def earn_twenty
+    @wallet += 20
   end
 
   def new_round
