@@ -48,7 +48,7 @@ class BlackjackGame
    if @p_total > 21
     # total_result
     puts "You burnt!"
-    # Consider putting a random sassy message about the dealer or the player after you finish the main criteria for the game.
+    random_insult
     play_again
     else
    puts "The dealer's visible card is the #{@d_hand[@d_hand.length-1].rank} of #{@d_hand[@d_hand.length-1].suit}."
@@ -148,6 +148,7 @@ class BlackjackGame
     puts "Your total is #{@p_total}. The dealer's total is #{@d_total}."
     if @d_total > @p_total
       puts "You lose this hand."
+      random_insult
     elsif @p_total > @d_total
       puts "You win this hand and $20!!!"
       earn_twenty
@@ -186,20 +187,20 @@ class BlackjackGame
     start_game
   end
 
-
-
-  # On game start: wallet = $100, player bets $10, is dealt two cards
-  #Dealer asks if player would like to hit or stay
-  # - Player assesses card values of own hand and dealer's visible hand
-  # - Player decides hit or stay.
-  # - If hit, player gets top card of deck added to hand. Card is visible. Value of card is added to player's total
-  # - If total >21, player busts and dealer wins. If total < 21, no bust, 
-  # repeat last 3 steps, starting with dealer asks if player would like to hit or stay
-  # - If stay, dealer's turn
-  # - Dealer assesses card values of own hand and of player's visible hand
-  # - Dealer hits or stays self
-  # - If dealer's total >21, dealer busts and player wins. If total <= 21, no bust
-  # - Once dealer no longer wants to hit, value of hands are compared. Closest to 21 wins. If both have 21, dealer wins cuz he's a turd.
-  # - Dealer reshuffles
+  def random_insult
+    random_num = Random.new
+    random_num.rand(6)
+    if random_num == 1
+      puts "The dealer laughs maniacally."
+    elsif random_num == 2
+      puts "The dealer scoffs at your incompetence."
+    elsif random_num == 3
+      puts "Out of the corner of your eye, you see something leave the room. It's your dignity."
+    elsif random_num == 4
+      puts "Maybe you should play a game you're better at."
+    elsif random_num == 5
+      puts "The dealer is glad you are not letting your education get in the way of your ignorance."
+    end
+  end
     
 end
