@@ -189,17 +189,19 @@ class BlackjackGame
 
   def random_insult
     random_num = Random.new
-    random_num.rand(6)
-    if random_num == 1
+    insult = random_num.rand(5)
+    if insult == 0
       puts "The dealer laughs maniacally."
-    elsif random_num == 2
+    elsif insult == 1
       puts "The dealer scoffs at your incompetence."
-    elsif random_num == 3
+    elsif insult == 2
       puts "Out of the corner of your eye, you see something leave the room. It's your dignity."
-    elsif random_num == 4
+    elsif insult == 3
       puts "Maybe you should play a game you're better at."
-    elsif random_num == 5
+    elsif insult == 4
       puts "The dealer is glad you are not letting your education get in the way of your ignorance."
+    else
+      puts "Liz this isn't working"
     end
   end
     
