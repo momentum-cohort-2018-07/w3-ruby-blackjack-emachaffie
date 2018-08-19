@@ -10,7 +10,7 @@ class Card
   def determine_value
     @value = case @rank
     when :A
-      1
+      11
     when 2..10
       @rank
     when :J

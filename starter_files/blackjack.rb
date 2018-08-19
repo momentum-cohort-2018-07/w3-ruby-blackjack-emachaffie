@@ -21,8 +21,8 @@ class BlackjackGame
       bet
       p_deal
       d_deal
-      player_analyze_hand
-    else puts "Game over"
+      player_check_hand
+    else puts "You are out of money. Game over."
     end
   end
 
@@ -40,22 +40,17 @@ class BlackjackGame
     2.times {@d_hand.push(@shoe.draw)}
   end
 
-  def player_analyze_hand
+  def player_check_hand
    @p_total = 0 
    @p_total = @p_hand.inject(0){|sum, x| sum + x.value}
+   p_ace_value
+   puts "The total of your hand is #{@p_total}."
    if @p_total > 21
     # total_result
     puts "You burnt!"
     # Consider putting a random sassy message about the dealer or the player after you finish the main criteria for the game.
-    puts "Would you like to play another hand? (y)es or (n)o?"
-    @choice = gets.chomp
-      if @choice == "y"
-        new_round
-      elsif @choice == "n"
-      else puts "Sorry, I didn't understand that. Liz hasn't coded a way for you to not break this here yet."
-      end
+    play_again
     else
-   puts "The total of your hand is #{@p_total}."
    puts "The dealer's visible card is the #{@d_hand[@d_hand.length-1].rank} of #{@d_hand[@d_hand.length-1].suit}."
    player_choice
     end
@@ -68,21 +63,26 @@ class BlackjackGame
       p_hit
     elsif @choice == "s"
       puts "You stay. Your total is #{@p_total}"
-      dealer_analyze_hand
+      dealer_check_hand
+    else
+      player_choice
     end
   end
 
 
-  def dealer_analyze_hand
+  def dealer_check_hand
     @d_total = 0 
     @d_total = @d_hand.inject(0){|sum, x| sum + x.value}
+    d_ace_value
     puts "********************"
     puts "The dealer is inspecting his cards."
+    puts "The dealer's total is #{@d_total}."
    if @d_total > 21
     puts "The dealer burnt, you win this hand and $20!!!"
     earn_twenty
-    new_round
+    play_again
    elsif @d_total > 16
+    puts "The dealer chooses to stay."
     calculate_winner
    else 
     d_hit
@@ -100,37 +100,73 @@ class BlackjackGame
     end
     
     puts "You are dealt the #{@p_hand[@p_hand.length-1].rank} of #{@p_hand[@p_hand.length-1].suit}." 
-    player_analyze_hand
+    player_check_hand
   end
 
   def d_hit
     @d_hand.push(@shoe.draw)
-    if @d_hand.length == 3
+    if @d_hand.length == 2
       puts "********************"
       puts "The dealer hits."
     else puts "********************"
       puts "The dealer hits again."
     end
-
     puts "The dealer gets the #{@d_hand[@d_hand.length-1].rank} of #{@d_hand[@d_hand.length-1].suit}." 
-    dealer_analyze_hand
+    dealer_check_hand
   end
 
-  def stay
+  def p_ace_value
+    @p_total = 0 
+    @p_total = @p_hand.inject(0){|sum, x| sum + x.value}
+    if @p_total > 21
+      @values = @p_hand.map { |i| i.value }
+      if (@values.index(11) != nil) && (@p_total > 21)
+        @p_hand[@values.index(11)].instance_variable_set(:@value, 1)
+        @p_total = 0
+        @p_total = @p_hand.inject(0){ |sum,x| sum + x.value }
+    end
+    end 
+  end
+
+  def d_ace_value
+    @d_total = 0 
+    @d_total = @d_hand.inject(0){|sum, x| sum + x.value}
+    if @d_total > 21
+      @values = @d_hand.map { |i| i.value }
+      if (@values.index(11) != nil) && (@d_total > 21)
+        @p_hand[@values.index(11)].instance_variable_set(:@value, 1)
+        @p_total = 0
+        @p_total = @p_hand.inject(0){ |sum,x| sum + x.value }
+    end
+    end 
   end
 
   def calculate_winner
-    @d_total = @d_hand.inject(0){|sum, x| sum + x.value}
-    @p_total = @p_hand.inject(0){|sum, x| sum + x.value}
+    puts "********************"
+    # @d_total = @d_hand.inject(0){|sum, x| sum + x.value}
+    # @p_total = @p_hand.inject(0){|sum, x| sum + x.value}
     puts "Your total is #{@p_total}. The dealer's total is #{@d_total}."
     if @d_total > @p_total
       puts "You lose this hand."
     elsif @p_total > @d_total
-      puts "You win this hand and $10!!!"
+      puts "You win this hand and $20!!!"
       earn_twenty
     else puts "You tie. The dealer wins. His house, his rules."
     end
-    new_round
+    play_again
+  end
+
+  def play_again
+    puts "Would you like to play another hand? (y)es or (n)o?"
+    @choice = gets.chomp
+      if @choice == "y"
+        new_round
+      elsif @choice == "n"
+        puts "Okay, quitter."
+      else
+        puts "Don't be sassy."
+        play_again
+      end
   end
 
   def lose_ten
